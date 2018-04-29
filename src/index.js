@@ -60,12 +60,11 @@ function returnFnResult(fn) {
    console.log(f()); // выведет 12
    console.log(f()); // выведет 13
  */
-function returnCounter(number) {
+function returnCounter(number=0) {
     return function f () {
         return ++number;
     }  
 }
-var f = returnCounter(10);
 
 /*
  Задание 5 *:
@@ -101,8 +100,8 @@ function returnArgumentsArray() {
 
    console.log(newSum()) выведет 6
  */
-function bindFunction(fn) {
-  //test
+function bindFunction(fn, ...args) {
+    return fn.bind(null, ...args); 
 }
 
 export {
