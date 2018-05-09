@@ -21,7 +21,7 @@ module.exports = function(config) {
         },
         port: 9876,
         browsers: ['Chrome'], // или Chrome или Firefox
-        captureTimeout: 20000,
+        captureTimeout: 120000,
         singleRun: true,
         plugins: [
             require('karma-mocha'),
