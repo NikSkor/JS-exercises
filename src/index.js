@@ -63,7 +63,7 @@ function findAllPSiblings(where) {
 
                 /* короткий вариант:
                 for (let xNode of where.children) {
-                    if (xNode.nextElementSibling !=null && xNode.nextElementSibling.nodeName == 'P') {
+                    if (xNode.nextElementSibling && xNode.nextElementSibling.nodeName == 'P') {
                         array.push(xNode); */
             }
         }
@@ -92,11 +92,15 @@ function findAllPSiblings(where) {
 function findError(where) {
     var result = [];
 
-    for (var child of where.childNodes) {
+    for (let child of where.childNodes) {
         if (child.nodeType === 1) {
             result.push(child.innerText);
         }
     }
+    /* Другой вариант решения:
+    for (var child of where.children) {
+        result.push(child.innerText);
+    } */
 
     return result;
 }
@@ -114,15 +118,12 @@ function findError(where) {
    должно быть преобразовано в <div></div><p></p>
  */
 function deleteTextNodes(where) {
-    var result = [];
-
-    for (var child of where.childNodes) {
+    for (let child of where.childNodes) {
         if (child.nodeType === 3) {
-            child.remove();
+            child.remove(); 
+            // или where.removeChild(child)
         }
     }
-
-    return result;
 }
 
 /*
@@ -138,6 +139,16 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
+    for (let i=0;i<where.childNodes.length; i++) {
+        let element = where.childNodes[i];
+
+        if (element.nodeType === 3) {
+            element.remove();
+            i--;
+        } else {
+            deleteTextNodesRecursive(element);
+        }
+    }
 }
 
 /*
@@ -161,6 +172,46 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
+    let stat = {};
+    let objClass ={};
+    let objTags = {};
+    let numText=0;
+
+    function returnStat(fn) {
+        for (let tag of fn.childNodes) {
+            if (tag.nodeType === 3) {
+                numText++;
+            }
+            if (tag.nodeType === 1) {
+
+                if (!objTags.hasOwnProperty(tag.tagName)) {
+                    objTags[tag.tagName] = 0;
+                } 
+                objTags[tag.tagName]+=1;
+                
+                if (tag.classList !='') {
+                    let mas=[];
+                    
+                    mas = tag.className.split(' ');
+                    for (let elem of mas) {
+                        if (!objClass.hasOwnProperty(elem)) {
+                            objClass[elem] = 0;
+                        } 
+                        objClass[elem]+=1;
+                    }
+                }
+            } 
+            returnStat(tag);
+        }
+        
+    }
+    returnStat(root);
+    stat.tags = objTags;
+    stat.classes = objClass;
+    stat.texts = numText;
+        
+    return stat;
+
 }
 
 /*
