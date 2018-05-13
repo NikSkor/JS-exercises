@@ -213,7 +213,6 @@ function collectDOMStat(root) {
     return stat;
 
 }
-
 /*
  Задание 8 *:
 
@@ -247,6 +246,18 @@ function collectDOMStat(root) {
    }
  */
 function observeChildNodes(where, fn) {
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes) {
+                fn({ type: 'insert', nodes: [...mutation.addedNodes] });
+            }
+            if (mutation.removedNodes) {
+                fn({ type: 'remove', nodes: [...mutation.addedNodes] });
+            }
+        });    
+    });
+      
+    observer.observe(where, { childList: true, subtree: true });
 }
 
 export {
