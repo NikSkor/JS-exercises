@@ -67,14 +67,14 @@ function createDiv() {
  */
 function addListeners(target) {
     target.onmousedown = function(e) {
-        // var coords = getCoords(target);
-        // var shiftX = e.pageX - target.offsetWidth;
-        // var shiftY = e.pageY - target.offsetHeight;
+        var coords = getCoords(target);
+        var shiftX = e.pageX - coords.left;
+        var shiftY = e.pageY - coords.top;
         
         moveAt(e);
         function moveAt(e) {
-            target.style.left = e.pageX - target.offsetWidth + 'px';
-            target.style.top = e.pageY - target.offsetHeight + 'px';
+            target.style.left = e.pageX - shiftX + 'px';
+            target.style.top = e.pageY - shiftY + 'px';
         }
       
         document.onmousemove = function(e) {
@@ -90,15 +90,15 @@ function addListeners(target) {
             target.onmouseup = null;
         };
 
-        // function getCoords(elem) {
-        //     var box = elem.getBoundingClientRect();
+        function getCoords(elem) {
+            var box = elem.getBoundingClientRect();
             
-        //     return {
-        //         top: box.top + pageYOffset,
-        //         left: box.left + pageXOffset
-        //     };
+            return {
+                top: box.top + pageYOffset,
+                left: box.left + pageXOffset
+            };
         
-        // }
+        }
     }
 }
 
