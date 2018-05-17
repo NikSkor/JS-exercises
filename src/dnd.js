@@ -43,8 +43,8 @@ function createDiv() {
     let colorB = rndNum(0, 255);
     let divWidth = rndNum (0, 1000);
     let divHeight = rndNum (0, 1000);
-    let leftPosition = rndNum (0, element.clientWidth);
-    let topPosition = rndNum (0, element.clientHeight);
+    let leftPosition = rndNum (0, homeworkContainer.clientWidth);
+    let topPosition = rndNum (0, homeworkContainer.clientHeight);
     
     element.style.position ='absolute';
     element.style.backgroundColor = `rgb(${colorR},${colorG},${colorB})`;
