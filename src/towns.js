@@ -30,6 +30,10 @@
  */
 const homeworkContainer = document.querySelector('#homework-container');
 
+// if (loadTowns()) {
+//     loadingBlock.remove();
+// }
+
 /*
  Функция должна вернуть Promise, который должен быть разрешен с массивом городов в качестве значения
 
@@ -37,6 +41,41 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
+    let promise = new Promise ((resolve)=>{
+        fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
+            // .then (() => loadingBlock.remove())
+            .then (response =>{
+                if (response.status >=400) {
+                    filterResult.innerText('Не удалось загрузить города');
+                    homeworkContainer.appendChild('button');
+                    let button = document.querySelector('button');
+                    
+                    button.innerText='Повторить';
+                    addEventListener('click', loadTowns() );
+
+                } 
+
+                return response.json()
+                    .then (towns => {
+                        towns.sort((first, second)=>{
+                            if (first.name > second.name) {
+                                return 1;
+                            }
+                            
+                            if (first.name < second.name) {
+                                return -1; 
+                            }
+                            
+                            return 0;
+                        })
+                        
+                        return resolve (towns);
+                    })
+            })
+    })
+
+    return promise; 
+  
 }
 
 /*
@@ -51,6 +90,17 @@ function loadTowns() {
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
+    function toLower (str) {
+        return str.toLowerCase();
+    }
+    if (toLower (full).indexOf(toLower (chunk))!=-1) {
+        
+        return true;
+
+    } 
+        
+    return false;
+    
 }
 
 /* Блок с надписью "Загрузка" */
