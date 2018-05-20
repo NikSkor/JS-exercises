@@ -30,10 +30,6 @@
  */
 const homeworkContainer = document.querySelector('#homework-container');
 
-// if (loadTowns()) {
-//     loadingBlock.remove();
-// }
-
 /*
  Функция должна вернуть Promise, который должен быть разрешен с массивом городов в качестве значения
 
@@ -41,20 +37,9 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
-    let promise = new Promise ((resolve)=>{
+    return new Promise (resolve=>{
         fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
-            // .then (() => loadingBlock.remove())
             .then (response =>{
-                if (response.status >=400) {
-                    filterResult.innerText('Не удалось загрузить города');
-                    homeworkContainer.appendChild('button');
-                    let button = document.querySelector('button');
-                    
-                    button.innerText='Повторить';
-                    addEventListener('click', loadTowns() );
-
-                } 
-
                 return response.json()
                     .then (towns => {
                         towns.sort((first, second)=>{
@@ -73,9 +58,6 @@ function loadTowns() {
                     })
             })
     })
-
-    return promise; 
-  
 }
 
 /*
@@ -93,12 +75,14 @@ function isMatching(full, chunk) {
     function toLower (str) {
         return str.toLowerCase();
     }
-    if (toLower (full).indexOf(toLower (chunk))!=-1) {
+    if (chunk != '') {
+        if (toLower (full).indexOf(toLower (chunk))!=-1) {
         
-        return true;
-
-    } 
-        
+            return true;
+    
+        }
+    }
+           
     return false;
     
 }
@@ -114,6 +98,33 @@ const filterResult = homeworkContainer.querySelector('#filter-result');
 
 filterInput.addEventListener('keyup', function() {
     // это обработчик нажатия кливиш в текстовом поле
+    let key = filterInput.value;
+
+    filterResult.innerHTML='';
+    loadTowns()
+        .then ( towns => {
+            loadingBlock.style.display = 'none';
+            filterBlock.style.display = 'block';
+            for (let town of towns) {
+                if (isMatching(town.name, key) && key.length !=0) {
+                    let element = document.createElement('div');
+                    
+                    element.textContent = town.name;
+
+                    filterResult.prepend(element);
+                }
+            }
+        })
+        .catch( ()=> {
+            loadingBlock.innerHTML='';
+            loadingBlock.textContent='Не удалось загрузить города';
+            let reButton = document.createElement('button');
+            
+            reButton.innerText='Повторить';
+            loadingBlock.appendChild(reButton);
+            
+            reButton.addEventListener('click', ()=> loadTowns() );
+        })
 });
 
 export {
