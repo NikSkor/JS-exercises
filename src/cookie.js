@@ -43,10 +43,41 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
+function createCookie(name, value) {
+    if (name.value == undefined || value.value == undefined) {
+        return;
+    }
+    document.cookie = `${name}=${value}`;
+}
+function cookieRow(name, value) {
+    let row = document.createElement('TR');
+
+    row.className='row';
+    row.innerHTML = `<td>${name.value}</td><td>${value.value}</td><td><button class='delButton'>Удалить</button></td>`;
+    listTable.prepend(row);
+}
+const row = listTable.querySelector('.row');
+const delButton = row.querySelector('delButton');
+
+delButton.addEventListener('click', ()=> {
+    let rowStr = delButton.parentNode;
+    
+    listTable.removeChild(rowStr);
+    
+})
+function deleteCookie (cookieName) {
+    let cookieDate = new Date ( );
+    
+    cookieDate.setTime ( cookieDate.getTime() - 1 );
+    document.cookie = cookieName += '=; expires=' + cookieDate.toGMTString();
+}
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
 });
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
+    createCookie(addNameInput, addValueInput);
+    cookieRow (addNameInput, addValueInput);
+
 });
