@@ -44,7 +44,7 @@ const addButton = homeworkContainer.querySelector('#add-button');
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
 function createCookie(name, value) {
-    if (name.value == undefined || value.value == undefined) {
+    if (name == undefined || value == undefined) {
         return;
     }
     document.cookie = `${name}=${value}`;
@@ -53,31 +53,96 @@ function cookieRow(name, value) {
     let row = document.createElement('TR');
 
     row.className='row';
-    row.innerHTML = `<td>${name.value}</td><td>${value.value}</td><td><button class='delButton'>Удалить</button></td>`;
+    row.innerHTML = `<td>${name}</td><td>${value}</td><td><button>Удалить</button></td>`;
     listTable.prepend(row);
-}
-const row = listTable.querySelector('.row');
-const delButton = row.querySelector('delButton');
+    // listTable.addEventListener('click', (e)=> {
+    //     let elem = e.target;
+          
+    //     if (elem.tagName === 'BUTTON') {
+    //         let cookieName = elem.closest('.row').firstElementChild.innerText;
+              
+    //         listTable.removeChild(elem.closest('.row'));
+    //         deleteCookie(cookieName);
+    //     }
+    // })
 
-delButton.addEventListener('click', ()=> {
-    let rowStr = delButton.parentNode;
+}
+listTable.addEventListener('click', (e)=> {
+    let elem = e.target;
     
-    listTable.removeChild(rowStr);
-    
+    if (elem.tagName === 'BUTTON') {
+        let cookieName = elem.closest('.row').firstElementChild.innerText;
+        
+        listTable.removeChild(elem.closest('.row'));
+        deleteCookie(cookieName);
+    }
 })
+
 function deleteCookie (cookieName) {
     let cookieDate = new Date ( );
     
     cookieDate.setTime ( cookieDate.getTime() - 1 );
     document.cookie = cookieName += '=; expires=' + cookieDate.toGMTString();
 }
+// function getCookie(name) {
+//     var matches = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
+  
+//     return matches ? decodeURIComponent(matches[1]) : undefined;
+// }
+function isMatching(full, chunk) {
+    function toLower (str) {
+        return str.toLowerCase();
+    }
+    if (chunk != '') {
+        if (toLower (full).indexOf(toLower (chunk))!=-1) {
+        
+            return true;
+    
+        }
+    }
+          
+    return false;
+
+}
+function getCookie() {
+    let cookie = document.cookie.split('; ').reduce((prev, current) => {
+        const [name, value] = current.split('=');
+      
+        prev[name]=value;
+      
+        return prev;
+    }, {});
+    
+    return cookie;
+}
+// const cookies = getCookie();
+
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
-});
 
+});
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
-    createCookie(addNameInput, addValueInput);
-    cookieRow (addNameInput, addValueInput);
+    let cookieName = addNameInput.value;
+    let cookieValue = addValueInput.value;
+    let rows = listTable.children;
+    let cookie = getCookie();
+
+    if (cookie[cookieName]) {
+        deleteCookie(cookieName);
+        for (let elem of rows) {
+            for (let child of elem.children) {
+                if (child.innerText == cookieName) {
+                    elem.remove();
+                }
+            }
+          
+        }
+    }
+    // if (getCookie(name)===true) {
+    //     return;
+    // }
+    createCookie(cookieName, cookieValue);
+    cookieRow (cookieName, cookieValue);
 
 });
