@@ -42,7 +42,6 @@ const addValueInput = homeworkContainer.querySelector('#add-value-input');
 const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
-let cookie = getCookie();
 
 function createCookie(name, value) {
     if (name == undefined || value == undefined) {
@@ -51,41 +50,11 @@ function createCookie(name, value) {
     document.cookie = `${name}=${value}`;
 }
 function cookieRow(name, value) {
-    // let cookieName = addNameInput.value;
-    // let cookieValue = addValueInput.value;
-    // let rows = listTable.children;
-    // let cookie = getCookie();
-
-    // if (cookie[name]) {
-    //     deleteCookie(name);
-    //     for (let elem of rows) {
-    //         for (let child of elem.children) {
-    //             if (child.innerText == name) {
-    //                 elem.remove();
-    //             }
-    //         }
-          
-    //     }
-    // }
-    // createCookie(name, value);
-    
     let row = document.createElement('TR');
 
     row.className='row';
     row.innerHTML = `<td>${name}</td><td>${value}</td><td><button>Удалить</button></td>`;
     listTable.prepend(row);
-    
-    // listTable.addEventListener('click', (e)=> {
-    //     let elem = e.target;
-          
-    //     if (elem.tagName === 'BUTTON') {
-    //         let cookieName = elem.closest('.row').firstElementChild.innerText;
-              
-    //         listTable.removeChild(elem.closest('.row'));
-    //         deleteCookie(cookieName);
-    //     }
-    // })
-
 }
 listTable.addEventListener('click', (e)=> {
     let elem = e.target;
@@ -104,11 +73,6 @@ function deleteCookie (cookieName) {
     cookieDate.setTime ( cookieDate.getTime() - 1 );
     document.cookie = cookieName += '=; expires=' + cookieDate.toGMTString();
 }
-// function getCookie(name) {
-//     var matches = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
-  
-//     return matches ? decodeURIComponent(matches[1]) : undefined;
-// }
 function isMatching(full, chunk) {
     function toLower (str) {
         return str.toLowerCase();
@@ -117,12 +81,10 @@ function isMatching(full, chunk) {
         if (toLower (full).indexOf(toLower (chunk))!=-1) {
         
             return true;
-    
         }
     }
-          
+    
     return false;
-
 }
 function getCookie() {
     let cookie = document.cookie.split('; ').reduce((prev, current) => {
@@ -135,59 +97,47 @@ function getCookie() {
     
     return cookie;
 }
-// const cookies = getCookie(); 
 function listCookie() {
-    // let cookieName = addNameInput.value;
-    // let cookie = getCookie();
+    let cookie = getCookie();
     let chunk = filterNameInput.value;
 
-    // for (let item of cookie) {
     if (chunk) {
         listTable.innerHTML='';
         if (cookie) {
             Object.keys(cookie).forEach(item => {
                 if (isMatching(cookie[item], chunk) || isMatching(item, chunk)) {
-                    // createCookie(item, cookie[item]);
                     cookieRow(item, cookie[item]);
                 }
             });   
         }
         
     }
-    
+    if (chunk=='') {
+        listTable.innerHTML='';
+        if (cookie) {
+            Object.keys(cookie).forEach(item => {
+                cookieRow(item, cookie[item]);
+            });   
+        }
+    }
 }
 
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
-    // let chunk = filterNameInput.value;
-    
-    // if (chunk) {
     listCookie();
-    // }
 
 });
 addButton.addEventListener('click', () => {
-    // здесь можно обработать нажатие на кнопку "добавить cookie"
-    // let chunk = filterNameInput.value;    
+    // здесь можно обработать нажатие на кнопку "добавить cookie" 
     let cookieName = addNameInput.value;
     let cookieValue = addValueInput.value;
-    let rows = listTable.children;
     let cookie = getCookie();
 
     if (cookie[cookieName]) {
         deleteCookie(cookieName);
-        for (let elem of rows) {
-            for (let child of elem.children) {
-                if (child.innerText == cookieName) {
-                    elem.remove();
-                }
-            }
-          
-        }
     }
     
     createCookie(cookieName, cookieValue);
-    // cookieRow (cookieName, cookieValue);
-    // listCookie(chunk);
+    listCookie();
 
 });
