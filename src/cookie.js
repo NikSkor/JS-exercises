@@ -54,7 +54,7 @@ function cookieRow(name, value) {
 
     row.className='row';
     row.innerHTML = `<td>${name}</td><td>${value}</td><td><button>Удалить</button></td>`;
-    listTable.prepend(row);
+    listTable.appendChild(row);
 }
 listTable.addEventListener('click', (e)=> {
     let elem = e.target;
@@ -121,7 +121,7 @@ function listCookie() {
         }
     }
 }
-
+listCookie();
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
     listCookie();
